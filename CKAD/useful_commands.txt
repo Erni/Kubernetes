@@ -45,3 +45,9 @@ kubectl expose pod nginx --port=80 --name nginx-service --type=NodePort --dry-ru
 # Or
 kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=client -o yaml
 # (This will not use the pods labels as selectors)
+
+# create user entry
+kubectl config set-credentials $USER_NICK --client-certificate=/path/to/crt_file --client-key=/path/to/key_file
+
+# Sets a context entry in kubeconfig Specifying a name that already exists will merge new fields on top of existing values for those fields.
+kubectl config set-context NAME [--cluster=cluster_nickname] [--user=user_nickname] [--namespace=namespace]
