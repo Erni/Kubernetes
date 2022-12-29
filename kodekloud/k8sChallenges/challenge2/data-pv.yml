@@ -7,7 +7,5 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteMany
-  volumes:
-  - name: vol
-    hostPath:
-      path: /web
+  hostPath:
+    path: /web
