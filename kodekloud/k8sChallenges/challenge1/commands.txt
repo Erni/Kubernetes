@@ -1,0 +1,5 @@
+# create user entry
+kubectl config set-credentials $USER_NICK --client-certificate=/path/to/crt_file --client-key=/path/to/key_file
+
+# Sets a context entry in kubeconfig Specifying a name that already exists will merge new fields on top of existing values for those fields.
+kubectl config set-context NAME [--cluster=cluster_nickname] [--user=user_nickname] [--namespace=namespace]
