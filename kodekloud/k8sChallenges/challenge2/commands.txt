@@ -1,0 +1,3 @@
+https://github.com/kodekloudhub/community-faq/blob/main/docs/diagnose-crashed-apiserver.md
+
+https://stackoverflow.com/questions/55432764/my-worker-node-status-is-ready-schedulingdisabled
