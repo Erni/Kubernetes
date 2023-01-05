@@ -1,0 +1,62 @@
+alias k=kubectl
+
+# 1. Create a Pod with two containers, both with image busybox and command "echo hello; sleep 3600".
+# Connect to the second container and run 'ls'
+k run busybox --image=busybox --command "echo hello; sleep 3600" --dry-run=client -o yaml
+# then edit the yaml file
+###############################
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: busybox
+  name: busybox
+spec:
+  containers:
+  - command: ['sh', '-c', 'echo hello; sleep 3600']
+    image: busybox
+    name: busybox1
+  - command: ['sh', '-c', 'echo hello; sleep 3600']
+    image: busybox
+    name: busybox2
+###############################
+
+k exec busybox --container busybox2 -it -- ls
+k exec busybox -c busybox2 -it -- ls
+
+# 2. Create a pod with an nginx container exposed on port 80.
+# Add a busybox init container which downloads a page using "wget -O /work-dir/index.html http://neverssl.com/online".
+# Make a volume of type emptyDir and mount it in both containers.
+# For the nginx container, mount it on "/usr/share/nginx/html" and for the initcontainer,
+# mount it on "/work-dir". When done, get the IP of the created pod and create a busybox pod and run "wget -O- IP"
+
+k run box --image=nginx --restart=Never --port=80 --dry-run=client -o yaml > pod-init.yaml
+###############################
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: vol
+  initContainers:
+  - image: busybox
+    name: busybox
+    command: ['sh', '-c', 'wget -O /work-dir/index.html http://neverssl.com/online']
+    volumeMounts:
+    - mountPath: /work-dir
+      name: vol
+  volumes:
+  - name: vol
+    emptyDir: {}
+###############################
+k get pod nginx -o wide
+k run busybox --image=busybox -it --rm --restart=Never -- wget -O- NGINX_IP
