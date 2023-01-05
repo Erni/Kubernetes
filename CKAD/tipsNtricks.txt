@@ -1,0 +1,24 @@
+# Usa siempre alias, tanto en tu entrenamiento como en el examen, te ahorran tiempo, estos fueron los que usé yo en el examen:
+alias k=kubectl
+alias ks='kubectl config set-context --current --namespace '
+
+# Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run)
+kubectl run nginx --image=nginx --dry-run=client -o yaml
+
+# Run command in existing pod
+kubectl exec my-pod -- ls
+
+# delete objets quickly
+kubectl delete pod nginx --grace-period=0 --force
+
+# Create a namespace with the specified name.
+kubectl create namespace NAME [--dry-run]
+
+# Create a config map called time-config with the data TIME_FREQ=10 in the dvl1987 namespace
+kubectl create cm time-config -n dvl1987 --from-literal=TIME_FREQ=10
+
+# Get a shell to the running container
+kubectl exec --stdin --tty POD_NAME -- /bin/bash
+
+# switch between clusters
+kubectl config use-context CLUSTER_NAME
