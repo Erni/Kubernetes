@@ -6,9 +6,6 @@ metadata:
   name: time-check
   namespace: dvl1987
 spec:
-  volumes:
-    - name: log-volume
-      emptyDir: {}
   containers:
   - image: busybox
     name: time-check
@@ -25,3 +22,6 @@ spec:
             name: time-config
             # Specify the key associated with the value
             key: TIME_FREQ
+  volumes:
+    - name: log-volume
+      emptyDir: {}
