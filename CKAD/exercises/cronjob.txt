@@ -1,0 +1,47 @@
+alias k=kubectl
+
+# Create a cron job with image busybox that runs on a schedule of "*/1 * * * *" and writes
+ 'date; echo Hello from the Kubernetes cluster' to standard output
+k create cronjob busybox --image=busybox --schedule="*/1 * * * *" -- /bin/sh -c 'date; echo Hello from the Kubernetes cluster'
+# or
+k create cronjob busybox --image=busybox --schedule="*/1 * * * *" --dry-run=client -o yaml
+############################
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: busybox
+spec:
+  jobTemplate:
+    metadata:
+      name: busybox
+    spec:
+      template:
+        spec:
+          containers:
+          - image: busybox
+            name: busybox
+            command: ['/bin/sh', '-c', 'date; echo Hello from the Kubernetes cluster']
+          restartPolicy: OnFailure
+  schedule: '*/1 * * * *'
+############################
+
+# See its logs and delete it
+k get pods # copy the container just created
+k logs <container> # you will see the date and message 
+k delete cj busybox --force #cj stands for cronjob and --force to delete immediately
+
+# Create the same cron job again, and watch the status. Once it ran, check which job ran by the created cron job. Check the log, and delete the cron job
+k get cj
+k get jobs --watch
+k get po --show-labels # observe that the pods have a label that mentions their 'parent' job
+k logs busybox-1529745840-m867r
+# Bear in mind that Kubernetes will run a new job/pod for each new cron job
+k delete cj busybox
+
+# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output.
+# The cron job should be terminated if it takes more than 17 seconds to start execution after its scheduled time (i.e. the job missed its scheduled time).
+.spec.startingDeadlineSeconds: 17
+
+# Create a cron job with image busybox that runs every minute and writes 'date; echo Hello from the Kubernetes cluster' to standard output.
+# The cron job should be terminated if it successfully starts but takes more than 12 seconds to complete execution
+.spec.jobTemplate.spec.activeDeadlineSeconds: 12
